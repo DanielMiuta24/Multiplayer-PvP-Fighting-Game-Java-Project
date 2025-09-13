@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS users (
+  username TEXT PRIMARY KEY,
+  password_hash TEXT NOT NULL,
+  wins INTEGER DEFAULT 0,
+  losses INTEGER DEFAULT 0
+);
