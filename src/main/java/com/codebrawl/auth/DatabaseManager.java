@@ -1,55 +1,37 @@
 package com.codebrawl.auth;
 
-import java.sql.*;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class DatabaseManager {
-    private final String url;
-
-    public DatabaseManager(String dbFile) { this.url = "jdbc:sqlite:" + dbFile; }
-
-    public void init() throws SQLException {
-        try (Connection c = DriverManager.getConnection(url);
-             Statement st = c.createStatement()) {
-            st.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS users(
-                      username TEXT PRIMARY KEY,
-                      password_hash TEXT NOT NULL,
-                      wins INTEGER DEFAULT 0,
-                      losses INTEGER DEFAULT 0
-                    )
-                    """);
+    static {
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("SQLite JDBC driver not found on classpath. Add org.xerial:sqlite-jdbc.", e);
         }
     }
 
-    public boolean createUser(String username, String passwordHash) throws SQLException {
-        try (Connection c = DriverManager.getConnection(url);
-             PreparedStatement ps = c.prepareStatement("INSERT INTO users(username,password_hash) VALUES(?,?)")) {
-            ps.setString(1, username);
-            ps.setString(2, passwordHash);
-            return ps.executeUpdate() == 1;
-        }
+    private final String jdbcUrl;
+
+    public DatabaseManager(String jdbcUrl) {
+        this.jdbcUrl = jdbcUrl;
+        ensureDir(jdbcUrl);
     }
 
-    public UserAccount getUser(String username) throws SQLException {
-        try (Connection c = DriverManager.getConnection(url);
-             PreparedStatement ps = c.prepareStatement(
-                     "SELECT username,password_hash,wins,losses FROM users WHERE username=?")) {
-            ps.setString(1, username);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new UserAccount(rs.getString(1), rs.getString(2), rs.getInt(3), rs.getInt(4));
-                }
-                return null;
-            }
-        }
+    private void ensureDir(String jdbcUrl) {
+        if (!jdbcUrl.startsWith("jdbc:sqlite:")) return;
+        String path = jdbcUrl.substring("jdbc:sqlite:".length());
+        File file = new File(path).getAbsoluteFile();
+        File parent = file.getParentFile();
+        if (parent != null && !parent.exists()) parent.mkdirs();
     }
 
-    public void updateStats(String username, boolean win) throws SQLException {
-        String col = win ? "wins" : "losses";
-        try (Connection c = DriverManager.getConnection(url);
-             PreparedStatement ps = c.prepareStatement("UPDATE users SET " + col + " = " + col + " + 1 WHERE username=?")) {
-            ps.setString(1, username);
-            ps.executeUpdate();
-        }
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(jdbcUrl);
     }
+
+    public String getJdbcUrl() { return jdbcUrl; }
 }
