@@ -1,40 +1,41 @@
 package com.codebrawl.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class Fighter {
-    protected final String name;
-    protected int health;
-    protected int strength;
-    protected int defense;
-    protected int energy;
-    protected final List<Move> moves = new ArrayList<>();
+    private final String clazz;
+    private final int maxHp;
+    private final int maxMp;
+    private final int moveSpeedPxPerSec;
+    private final int guardReduction;
 
-    protected Fighter(String name, int health, int strength, int defense, int energy) {
-        this.name = name;
-        this.health = health;
-        this.strength = strength;
-        this.defense = defense;
-        this.energy = energy;
-        initMoves();
+    private final Move basic;
+    private final Move special;
+
+    protected Fighter(String clazz, int maxHp, int maxMp, int speed, int guardReduction,
+                      Move basic, Move special) {
+        this.clazz = clazz;
+        this.maxHp = maxHp;
+        this.maxMp = maxMp;
+        this.moveSpeedPxPerSec = speed;
+        this.guardReduction = guardReduction;
+        this.basic = basic;
+        this.special = special;
     }
 
-    protected abstract void initMoves();
+    public String getClazz()            { return clazz; }
+    public int getMaxHp()               { return maxHp; }
+    public int getMaxMp()               { return maxMp; }
+    public int getMoveSpeedPxPerSec()   { return moveSpeedPxPerSec; }
+    public int getGuardReduction()      { return guardReduction; }
+    public Move getBasicMove()          { return basic; }
+    public Move getSpecialMove()        { return special; }
 
-    public String getName() { return name; }
-    public int getHealth() { return health; }
-    public int getStrength() { return strength; }
-    public int getDefense() { return defense; }
-    public int getEnergy() { return energy; }
-    public List<Move> getMoves() { return moves; }
-    public boolean isAlive() { return health > 0; }
 
-    public boolean canUse(Move m) { return !m.onCooldown() && energy >= m.getEnergyCost(); }
-    public void consumeEnergy(int amount) { energy = Math.max(0, energy - amount); }
-    public void regenEnergy(int amount) { energy = Math.min(100, energy + amount); }
-    public void receiveDamage(int dmg) { health = Math.max(0, health - Math.max(0, dmg)); }
-
-    public double critChance() { return 0.10; }
-    public double dodgeChance() { return 0.05; }
+    public static Fighter create(String clazz) {
+        if (clazz == null) clazz = "samurai";
+        switch (clazz.toLowerCase()) {
+            case "shinobi": return new Shinobi();
+            case "warrior": return new Warrior();
+            default:        return new Samurai();
+        }
+    }
 }
