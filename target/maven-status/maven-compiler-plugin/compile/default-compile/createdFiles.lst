@@ -12,7 +12,6 @@ com/codebrawl/model/Fighter.class
 com/codebrawl/auth/AuthManager.class
 com/codebrawl/net/RtServer.class
 com/codebrawl/ui/ClientApp$Anim.class
-com/codebrawl/auth/UserAccount.class
 com/codebrawl/model/Shinobi.class
 com/codebrawl/model/MoveType.class
 com/codebrawl/ui/ClientApp$1.class

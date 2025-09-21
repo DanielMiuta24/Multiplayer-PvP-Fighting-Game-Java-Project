@@ -51,7 +51,11 @@ public class ClientApp extends Application {
     private static final long HURT_MS = 220;
 
     private Button respawnBtn;
-    private Label killsLabel = new Label("Kills: 0");
+    private Label killsLabel = new Label("KILLS: 0");
+
+
+    private StackPane leaderboardOverlay;
+    private GridPane leaderboardTable;
 
     @Override public void start(Stage stage) {
         this.stage = stage;
@@ -152,15 +156,18 @@ public class ClientApp extends Application {
 
     private Scene buildGameScene() {
         BorderPane root = new BorderPane();
-        Canvas canvas = new Canvas(960, 540);
-        root.setCenter(canvas);
 
+        Canvas canvas = new Canvas(960, 540);
+
+
+        killsLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;");
         VBox hud = new VBox(killsLabel);
         hud.setPadding(new Insets(8));
-        hud.setAlignment(Pos.TOP_RIGHT);
-        hud.setStyle("-fx-background-color: rgba(0,0,0,0.35); -fx-background-radius: 8;");
-        BorderPane.setAlignment(hud, Pos.TOP_RIGHT);
-        root.setRight(hud);
+        hud.setAlignment(Pos.TOP_CENTER);
+        hud.setMouseTransparent(true);
+        hud.setStyle("-fx-background-color: rgba(0,0,0,0.35);");
+        StackPane.setAlignment(hud, Pos.TOP_CENTER);
+
 
         respawnBtn = new Button("Respawn");
         respawnBtn.setVisible(false);
@@ -169,13 +176,49 @@ public class ClientApp extends Application {
         overlay.setPickOnBounds(false);
         StackPane.setAlignment(respawnBtn, Pos.CENTER);
 
-        StackPane stack = new StackPane(canvas, overlay);
-        root.setCenter(stack);
 
+        leaderboardTable = new GridPane();
+        leaderboardTable.setHgap(16);
+        leaderboardTable.setVgap(6);
+        Label hRank  = new Label("#");
+        Label hName  = new Label("Player");
+        Label hKills = new Label("Kills");
+        Label hDeaths= new Label("Deaths");
+        for (Label h : List.of(hRank, hName, hKills, hDeaths)) {
+            h.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+        }
+        leaderboardTable.addRow(0, hRank, hName, hKills, hDeaths);
+
+        Label lbTitle = new Label("TOP 10");
+        lbTitle.setStyle("-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;");
+        VBox lbBody = new VBox(8, lbTitle, leaderboardTable);
+        lbBody.setPadding(new Insets(16));
+
+        leaderboardOverlay = new StackPane(lbBody);
+        leaderboardOverlay.setStyle("-fx-background-color: rgba(0,0,0,0.6); -fx-background-radius: 12;");
+        leaderboardOverlay.setVisible(false);
+        leaderboardOverlay.setManaged(false);
+        StackPane.setAlignment(leaderboardOverlay, Pos.CENTER);
+
+        StackPane stack = new StackPane(canvas, overlay, hud, leaderboardOverlay);
+        canvas.widthProperty().bind(stack.widthProperty());
+        canvas.heightProperty().bind(stack.heightProperty());
+
+        root.setCenter(stack);
+        root.setStyle("-fx-background-color: black;");
         Scene scene = new Scene(root, 980, 600);
+        scene.setFill(Color.BLACK);
         installGlobalInputFilters(scene);
         scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
-            if (e.getCode() == KeyCode.ESCAPE) showEscapeMenu(scene);
+            if (e.getCode() == KeyCode.ESCAPE) {
+                showEscapeMenu(scene);
+            } else if (e.getCode() == KeyCode.N) {
+                boolean show = !leaderboardOverlay.isVisible();
+                leaderboardOverlay.setVisible(show);
+                leaderboardOverlay.setManaged(show);
+                if (show && net != null) net.send("REQ_TOP 10");
+                e.consume();
+            }
         });
 
         new AnimationTimer() {
@@ -212,8 +255,41 @@ public class ClientApp extends Application {
             if (line.startsWith("CHAR_CREATED ")) { net.send("LIST_CHARS"); return; }
             if (line.startsWith("CHAR_FAIL ")) { new Alert(Alert.AlertType.ERROR, line.substring(10)).show(); return; }
             if (line.startsWith("WELCOME ")) { myId = line.split("\\s+")[1]; gameScene = buildGameScene(); stage.setScene(gameScene); return; }
-            if (line.startsWith("SCORES ")) { String[] p = line.split("\\s+"); if (p.length>=2) killsLabel.setText("Kills: " + p[1]); return; }
+
+
+            if (line.startsWith("SCORES ")) {
+                String val = line.substring(7).trim();
+                try { killsLabel.setText("KILLS: " + Integer.parseInt(val)); } catch (Exception ignored) {}
+                return;
+            }
+
+
+            if (line.startsWith("TOP ")) {
+                String[] p = line.split("\\s+");
+                int idx = 2;
+
+                leaderboardTable.getChildren().removeIf(node -> {
+                    Integer r = GridPane.getRowIndex(node);
+                    return r != null && r > 0;
+                });
+                int row = 1;
+                while (idx + 2 < p.length && row <= 10) {
+                    String name   = p[idx++].replace('_',' ');
+                    String kills  = p[idx++];
+                    String deaths = p[idx++];
+                    Label c0 = new Label(String.valueOf(row));
+                    Label c1 = new Label(name);
+                    Label c2 = new Label(kills);
+                    Label c3 = new Label(deaths);
+                    for (Label lab : List.of(c0,c1,c2,c3)) lab.setStyle("-fx-text-fill: white;");
+                    leaderboardTable.addRow(row, c0, c1, c2, c3);
+                    row++;
+                }
+                return;
+            }
+
             if (line.startsWith("RESPAWN_OK")) { return; }
+
             if (line.startsWith("SNAPSHOT ")) {
                 String[] p = line.split("\\s+");
                 int count = Integer.parseInt(p[2]);
@@ -240,7 +316,6 @@ public class ClientApp extends Application {
                     iAmDead = (me != null && me.hp <= 0);
                 }
                 if (respawnBtn != null) respawnBtn.setVisible(iAmDead);
-                return;
             }
         });
     }
@@ -284,14 +359,23 @@ public class ClientApp extends Application {
     }
 
     private void draw(GraphicsContext g, double dt) {
-        g.setFill(Color.BLACK); g.fillRect(0,0,960,540);
-        drawBackground(g);
+        double cw = g.getCanvas().getWidth();
+        double ch = g.getCanvas().getHeight();
+
+        g.setFill(Color.BLACK);
+        g.fillRect(0, 0, cw, ch);
+
+        drawBackground(g, cw, ch);
 
         long nowMs = System.currentTimeMillis();
 
+        double camX = camX(cw, ch);
+        double camY = camY(cw, ch);
+
         for (Player p : players.values()) {
-            double camX = camX(), camY = camY();
-            double px = p.x - camX, py = p.y - camY;
+            double px = p.x - camX;
+            double py = p.y - camY;
+
             int[] prev = lastPos.getOrDefault(p.id, new int[]{p.x, p.y});
             boolean moving = (prev[0] != p.x) || (prev[1] != p.y);
             lastPos.put(p.id, new int[]{p.x, p.y});
@@ -315,13 +399,16 @@ public class ClientApp extends Application {
 
             if (chosen != null) {
                 chosen.t = (chosen.t + dt * 10) % Math.max(1, chosen.frames);
-                int fi = (int)chosen.t;
+                int fi = (int) chosen.t;
                 double dw = chosen.fw * SCALE, dh = chosen.fh * SCALE;
-                double dx = px - dw/2, dy = py - dh/2;
-                if (p.facingRight) g.drawImage(chosen.sheet, fi*chosen.fw, 0, chosen.fw, chosen.fh, dx, dy, dw, dh);
-                else g.drawImage(chosen.sheet, fi*chosen.fw, 0, chosen.fw, chosen.fh, dx+dw, dy, -dw, dh);
+                double dx = px - dw / 2, dy = py - dh / 2;
+                if (p.facingRight)
+                    g.drawImage(chosen.sheet, fi * chosen.fw, 0, chosen.fw, chosen.fh, dx, dy, dw, dh);
+                else
+                    g.drawImage(chosen.sheet, fi * chosen.fw, 0, chosen.fw, chosen.fh, dx + dw, dy, -dw, dh);
             } else {
-                g.setFill(Color.DARKRED); g.fillRect(px-12, py-12, 24, 24);
+                g.setFill(Color.DARKRED);
+                g.fillRect(px - 12, py - 12, 24, 24);
             }
 
             g.setFill(Color.WHITE);
@@ -329,27 +416,33 @@ public class ClientApp extends Application {
         }
     }
 
-    private double camX() {
-        Player m = (myId!=null) ? players.get(myId) : null;
-        if (m != null) return m.x - 480;
-        if (!players.isEmpty()) return players.values().iterator().next().x - 480;
-        return 0;
-    }
-    private double camY() {
-        Player m = (myId!=null) ? players.get(myId) : null;
-        if (m != null) return m.y - 540*0.6;
-        if (!players.isEmpty()) return players.values().iterator().next().y - 540*0.6;
+    private double camX(double viewW, double viewH) {
+        Player m = (myId != null) ? players.get(myId) : null;
+        if (m != null) return m.x - viewW / 2.0;
+        if (!players.isEmpty()) return players.values().iterator().next().x - viewW / 2.0;
         return 0;
     }
 
-    private void drawBackground(GraphicsContext g) {
+    private double camY(double viewW, double viewH) {
+        Player m = (myId != null) ? players.get(myId) : null;
+        double focus = viewH * 0.6;
+        if (m != null) return m.y - focus;
+        if (!players.isEmpty()) return players.values().iterator().next().y - focus;
+        return 0;
+    }
+
+    private void drawBackground(GraphicsContext g, double viewW, double viewH) {
         if (arenaBG == null) return;
-        double viewW = 960, viewH = 540;
-        double worldW = arenaBG.getWidth(), worldH = arenaBG.getHeight();
-        double cx = camX(), cy = camY();
-        if (cx < 0) cx = 0; if (cy < 0) cy = 0;
-        if (cx > worldW - viewW) cx = worldW - viewW;
-        if (cy > worldH - viewH) cy = worldH - viewH;
+
+        double worldW = arenaBG.getWidth();
+        double worldH = arenaBG.getHeight();
+
+        double cx = camX(viewW, viewH);
+        double cy = camY(viewW, viewH);
+
+        cx = Math.max(0, Math.min(cx, Math.max(0, worldW - viewW)));
+        cy = Math.max(0, Math.min(cy, Math.max(0, worldH - viewH)));
+
         g.drawImage(arenaBG, cx, cy, viewW, viewH, 0, 0, viewW, viewH);
     }
 

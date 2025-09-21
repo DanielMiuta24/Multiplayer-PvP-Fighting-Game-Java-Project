@@ -43,8 +43,7 @@ public class ClientSession implements Runnable {
 
     public String getId() { return id; }
     public Integer getCharacterId() { return characterId; }
-    public String getCharacterClass() { return characterClass; }
-    public String getDisplayName() { return displayName; }
+
 
     private void log(String msg){ System.out.println("[Session " + id + "] " + msg); }
     private void sendLine(String s){ log(">> " + s); synchronized (out) { out.println(s); } }
@@ -82,7 +81,6 @@ public class ClientSession implements Runnable {
             String u = p[1], pw = p[2];
             try {
                 boolean ok = auth.register(u, pw);
-                // keep REGISTER_* as-is for client
                 sendLine(ok ? "REGISTER_OK" : "REGISTER_FAIL exists");
             } catch (Exception e) {
                 log("REGISTER error: " + e);
@@ -115,7 +113,6 @@ public class ClientSession implements Runnable {
 
         if (userId <= 0) { sendLine("AUTH_FAIL login_required"); return; }
 
-        // --- LIST_CHARS -> CHARS n id name cls ...
         if (line.equals("LIST_CHARS")) {
             try {
                 var list = auth.listCharacters(userId);
@@ -133,7 +130,6 @@ public class ClientSession implements Runnable {
             return;
         }
 
-        // --- CREATE_CHAR -> CHAR_CREATED | CHAR_FAIL <reason>
         if (line.startsWith("CREATE_CHAR ")) {
             String[] p = line.split("\\s+");
             if (p.length < 3) { sendLine("CHAR_FAIL bad_args"); return; }
@@ -155,7 +151,6 @@ public class ClientSession implements Runnable {
             return;
         }
 
-        // --- SELECT_CHAR (kept for compatibility) ---
         if (line.startsWith("SELECT_CHAR ")) {
             String[] p = line.split("\\s+");
             if (p.length < 2) { sendLine("SELECT_CHAR_FAIL bad_args"); return; }
@@ -182,7 +177,6 @@ public class ClientSession implements Runnable {
             return;
         }
 
-        // --- JOIN_CHAR <id> : what the client sends (combines select + join)
         if (line.startsWith("JOIN_CHAR ")) {
             String[] p = line.split("\\s+");
             if (p.length < 2) { sendLine("AUTH_FAIL bad_args"); return; }
@@ -211,7 +205,6 @@ public class ClientSession implements Runnable {
             return;
         }
 
-        // --- legacy JOIN (name class) still supported
         if (line.startsWith("JOIN")) {
             String[] p = line.split("\\s+");
             if (characterId == null && p.length >= 3) {
@@ -232,11 +225,20 @@ public class ClientSession implements Runnable {
 
         if (line.equals("RESPAWN")) {
             if (joined) world.requestRespawn(this);
+            return;
+        }
+
+
+        if (line.startsWith("REQ_TOP")) {
+            int limit = 10;
+            String[] p = line.split("\\s+");
+            if (p.length >= 2) {
+                try { limit = Integer.parseInt(p[1]); } catch (NumberFormatException ignored) {}
+            }
+            world.sendTopTo(this, limit);
         }
     }
 
-    // --- FIX: actually deliver broadcast lines to the client
-    public void send(String s) {
-        sendLine(s);
-    }
+
+    public void send(String s) { sendLine(s); }
 }

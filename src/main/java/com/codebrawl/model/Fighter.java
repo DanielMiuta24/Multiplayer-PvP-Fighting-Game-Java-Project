@@ -21,12 +21,12 @@ public abstract class Fighter {
         this.special = special;
     }
 
-    public String getClazz()            { return clazz; }
+
     public int getMaxHp()               { return maxHp; }
     public int getMoveSpeedPxPerSec()   { return moveSpeedPxPerSec; }
     public int getGuardReduction()      { return guardReduction; }
     public Move getBasicMove()          { return basic; }
-    public Move getSpecialMove()        { return special; }
+
 
 
     public static Fighter create(String clazz) {
