@@ -53,7 +53,6 @@ public class ClientApp extends Application {
     private Button respawnBtn;
     private Label killsLabel = new Label("KILLS: 0");
 
-
     private StackPane leaderboardOverlay;
     private GridPane leaderboardTable;
 
@@ -156,9 +155,7 @@ public class ClientApp extends Application {
 
     private Scene buildGameScene() {
         BorderPane root = new BorderPane();
-
         Canvas canvas = new Canvas(960, 540);
-
 
         killsLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;");
         VBox hud = new VBox(killsLabel);
@@ -168,14 +165,12 @@ public class ClientApp extends Application {
         hud.setStyle("-fx-background-color: rgba(0,0,0,0.35);");
         StackPane.setAlignment(hud, Pos.TOP_CENTER);
 
-
         respawnBtn = new Button("Respawn");
         respawnBtn.setVisible(false);
         respawnBtn.setOnAction(e -> net.send("RESPAWN"));
         StackPane overlay = new StackPane(respawnBtn);
         overlay.setPickOnBounds(false);
         StackPane.setAlignment(respawnBtn, Pos.CENTER);
-
 
         leaderboardTable = new GridPane();
         leaderboardTable.setHgap(16);
@@ -184,7 +179,7 @@ public class ClientApp extends Application {
         Label hName  = new Label("Player");
         Label hKills = new Label("Kills");
         Label hDeaths= new Label("Deaths");
-        for (Label h : List.of(hRank, hName, hKills, hDeaths)) {
+        for (Label h : Arrays.asList(hRank, hName, hKills, hDeaths)) {
             h.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
         }
         leaderboardTable.addRow(0, hRank, hName, hKills, hDeaths);
@@ -255,19 +250,10 @@ public class ClientApp extends Application {
             if (line.startsWith("CHAR_CREATED ")) { net.send("LIST_CHARS"); return; }
             if (line.startsWith("CHAR_FAIL ")) { new Alert(Alert.AlertType.ERROR, line.substring(10)).show(); return; }
             if (line.startsWith("WELCOME ")) { myId = line.split("\\s+")[1]; gameScene = buildGameScene(); stage.setScene(gameScene); return; }
-
-
-            if (line.startsWith("SCORES ")) {
-                String val = line.substring(7).trim();
-                try { killsLabel.setText("KILLS: " + Integer.parseInt(val)); } catch (Exception ignored) {}
-                return;
-            }
-
-
+            if (line.startsWith("SCORES ")) { String val = line.substring(7).trim(); try { killsLabel.setText("KILLS: " + Integer.parseInt(val)); } catch (Exception ignored) {} return; }
             if (line.startsWith("TOP ")) {
                 String[] p = line.split("\\s+");
                 int idx = 2;
-
                 leaderboardTable.getChildren().removeIf(node -> {
                     Integer r = GridPane.getRowIndex(node);
                     return r != null && r > 0;
@@ -281,15 +267,13 @@ public class ClientApp extends Application {
                     Label c1 = new Label(name);
                     Label c2 = new Label(kills);
                     Label c3 = new Label(deaths);
-                    for (Label lab : List.of(c0,c1,c2,c3)) lab.setStyle("-fx-text-fill: white;");
+                    for (Label lab : Arrays.asList(c0,c1,c2,c3)) lab.setStyle("-fx-text-fill: white;");
                     leaderboardTable.addRow(row, c0, c1, c2, c3);
                     row++;
                 }
                 return;
             }
-
             if (line.startsWith("RESPAWN_OK")) { return; }
-
             if (line.startsWith("SNAPSHOT ")) {
                 String[] p = line.split("\\s+");
                 int count = Integer.parseInt(p[2]);

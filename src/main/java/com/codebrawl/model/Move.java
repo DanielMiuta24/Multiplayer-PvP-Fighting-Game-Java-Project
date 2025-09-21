@@ -13,7 +13,7 @@ public class Move {
         this.cooldownMs = cooldownMs;
     }
 
-    public MoveType getType()     { return type; }
+
     public int getDamage()        { return damage; }
     public int getRangePx()       { return rangePx; }
     public long getCooldownMs()   { return cooldownMs; }

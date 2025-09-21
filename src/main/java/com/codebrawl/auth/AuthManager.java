@@ -26,7 +26,6 @@ public class AuthManager {
     }
 
     public AuthManager(DatabaseManager databaseManager) {
-
         this.db = new DatabaseManager();
         initSchema();
     }
@@ -107,7 +106,6 @@ public class AuthManager {
     public int createCharacter(int userId, String name, String clazz) throws SQLException {
         if (name == null || name.isBlank()) name = "Hero";
         if (clazz == null || clazz.isBlank()) clazz = "samurai";
-
         try (Connection c = db.getConnection()) {
             try (PreparedStatement ps = c.prepareStatement(
                     "SELECT COUNT(*) FROM characters WHERE user_id=?")) {
@@ -126,7 +124,6 @@ public class AuthManager {
                     if (rs.next()) throw new SQLException("duplicate_character_name");
                 }
             }
-
             int newId;
             try (PreparedStatement ps = c.prepareStatement(
                     "INSERT INTO characters(user_id, name, clazz) VALUES(?,?,?)",
@@ -181,7 +178,6 @@ public class AuthManager {
         }
     }
 
-
     public int getKills(int characterId) throws SQLException {
         try (Connection c = db.getConnection();
              PreparedStatement ps = c.prepareStatement(
@@ -192,7 +188,6 @@ public class AuthManager {
             }
         }
     }
-
 
     public List<CharacterRow> topKillers(int limit) throws SQLException {
         List<CharacterRow> out = new ArrayList<>();
