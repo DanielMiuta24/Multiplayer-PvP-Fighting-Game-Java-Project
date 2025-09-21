@@ -382,8 +382,13 @@ public class ClientApp extends Application {
             else if (ca != null) chosen = ca.idle;
 
             if (chosen != null) {
-                chosen.t = (chosen.t + dt * 10) % Math.max(1, chosen.frames);
-                int fi = (int) chosen.t;
+                int fi;
+                if (isDead && chosen == ca.dead) {
+                    fi = Math.max(0, chosen.frames - 1);   // freeze on last frame
+                } else {
+                    chosen.t = (chosen.t + dt * 10) % Math.max(1, chosen.frames);
+                    fi = (int) chosen.t;
+                }
                 double dw = chosen.fw * SCALE, dh = chosen.fh * SCALE;
                 double dx = px - dw / 2, dy = py - dh / 2;
                 if (p.facingRight)
@@ -399,6 +404,7 @@ public class ClientApp extends Application {
             g.fillText(p.name + " (" + p.hp + ")", px - 24, py - 30);
         }
     }
+
 
     private double camX(double viewW, double viewH) {
         Player m = (myId != null) ? players.get(myId) : null;

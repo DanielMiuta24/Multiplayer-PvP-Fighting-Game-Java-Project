@@ -84,6 +84,7 @@ public class World {
 
     public void tick(double dt) {
         for (Player p : players.values()) {
+            if (!p.alive) continue;
             int speed = p.fighter.getMoveSpeedPxPerSec();
             int dx = (p.right ? 1 : 0) - (p.left ? 1 : 0);
             int dy = (p.down  ? 1 : 0) - (p.up   ? 1 : 0);
@@ -159,6 +160,7 @@ public class World {
 
         broadcastSnapshot();
     }
+
 
     public void sendTopTo(ClientSession s, int limit) {
         s.send(buildTopLine(limit));
