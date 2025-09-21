@@ -1,64 +1,75 @@
 package com.codebrawl.net;
 
+import com.codebrawl.auth.AuthManager;
+import com.codebrawl.auth.DatabaseManager;
 import com.codebrawl.realtime.World;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class RtServer {
+
     private final int port;
-    private final World world = new World();
-    private final com.codebrawl.auth.AuthManager auth;
-    private final ConcurrentHashMap<String, ClientSession> userSessions = new ConcurrentHashMap<>();
+    private World world;
+    private AuthManager auth;
+    private final ExecutorService pool = Executors.newCachedThreadPool();
+    private volatile boolean running = true;
 
     public RtServer(int port) {
         this.port = port;
-        this.auth = new com.codebrawl.auth.AuthManager();
-        System.out.println("[Server] CWD=" + System.getProperty("user.dir"));
     }
 
-    public boolean reserveUser(String username, ClientSession sess) {
-        return userSessions.putIfAbsent(username, sess) == null;
-    }
+    public void start() {
+        try {
+            System.out.println("[RtServer] boot: creating AuthManager/DatabaseManager");
+            auth = new AuthManager(new DatabaseManager());
 
-    public void releaseUser(String username) {
-        if (username != null) userSessions.remove(username);
-    }
+            System.out.println("[RtServer] boot: creating World");
+            world = new World(auth);
 
-    public void start() throws Exception {
-        try (ServerSocket ss = new ServerSocket(port)) {
-            System.out.println("[Server] Listening on " + port);
-
-            Thread acceptor = new Thread(() -> {
-                try {
-                    while (!Thread.currentThread().isInterrupted()) {
-                        Socket s = ss.accept();
-                        ClientSession cs = new ClientSession(s, world, this, auth);
-                        world.addSession(cs);
-                        new Thread(cs, "client-" + s.getPort()).start();
-                    }
-                } catch (Exception e) {
-                    System.out.println("[Server] accept loop terminated: " + e);
+            Thread gameLoop = new Thread(() -> {
+                long last = System.nanoTime();
+                final double targetDt = 1.0 / 60.0;
+                final long stepNs = (long)(targetDt * 1_000_000_000L);
+                while (running) {
+                    long now = System.nanoTime();
+                    double dt = (now - last) / 1e9;
+                    if (dt < 0) dt = 0;
+                    world.tick(Math.min(dt, 0.05));
+                    last = now;
+                    try { Thread.sleep(Math.max(1, (stepNs - (System.nanoTime() - now)) / 1_000_000)); }
+                    catch (InterruptedException ignored) {}
                 }
-            }, "acceptor");
-            acceptor.setDaemon(true);
-            acceptor.start();
+            }, "GameLoop");
+            gameLoop.setDaemon(true);
+            gameLoop.start();
 
-            long last = System.nanoTime();
-            while (true) {
-                long now = System.nanoTime();
-                double dt = (now - last) / 1e9;
-                last = now;
-                world.tick(Math.min(dt, 0.05));
-                Thread.sleep(16);
+            System.out.println("[RtServer] Listening on " + port);
+            try (ServerSocket server = new ServerSocket(port)) {
+                while (running) {
+                    Socket sock = server.accept();
+                    System.out.println("[RtServer] accepted " + sock.getRemoteSocketAddress());
+                    pool.execute(new ClientSession(sock, world, this, auth));
+                }
             }
+        } catch (Throwable t) {
+            System.err.println("[RtServer] FATAL: " + t);
+            t.printStackTrace(System.err);
+            throw new RuntimeException(t);
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        int port = 12345;
-        if (args.length > 0) try { port = Integer.parseInt(args[0]); } catch (NumberFormatException ignored) {}
-        new RtServer(port).start();
+    public static void main(String[] args) {
+        try {
+            int port = (args.length > 0) ? Integer.parseInt(args[0]) : 12345;
+            System.out.println("[RtServer] main(): starting on port " + port);
+            new RtServer(port).start();
+        } catch (Throwable t) {
+            System.err.println("[RtServer] MAIN FATAL: " + t);
+            t.printStackTrace(System.err);
+            System.exit(1);
+        }
     }
 }
