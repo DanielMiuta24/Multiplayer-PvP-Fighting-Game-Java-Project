@@ -6,12 +6,13 @@ import com.codebrawl.model.Move;
 import com.codebrawl.net.ClientSession;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class World {
 
     private static final int WORLD_W = 1920;
-    private static final int WORLD_H = 1080;
+
     private static final int FLOOR_Y = 820;
 
     private static class Player {
@@ -142,14 +143,50 @@ public class World {
                     b.alive = false;
                     broadcast("KO " + aS.getId() + " " + bS.getId());
                     try {
-                        if (aS.getCharacterId() != null) auth.addKill(aS.getCharacterId());
-                        if (bS.getCharacterId() != null) auth.addDeath(bS.getCharacterId());
+                        if (aS.getCharacterId() != null) {
+                            auth.addKill(aS.getCharacterId());
+                            int newKills = auth.getKills(aS.getCharacterId());
+                            aS.send("SCORES " + newKills);   // killer gets their updated total
+                        }
+                        if (bS.getCharacterId() != null) {
+                            auth.addDeath(bS.getCharacterId());
+                        }
                     } catch (Exception ignored) {}
+
+
+                    broadcastTop(10);
                 }
             }
         }
 
         broadcastSnapshot();
+    }
+
+
+    public void sendTopTo(ClientSession s, int limit) {
+        s.send(buildTopLine(limit));
+    }
+
+
+    public void broadcastTop(int limit) {
+        String line = buildTopLine(limit);
+        broadcast(line);
+    }
+
+    private String buildTopLine(int limit) {
+        try {
+            List<AuthManager.CharacterRow> top = auth.topKillers(limit);
+            StringBuilder sb = new StringBuilder("TOP ").append(top.size());
+            for (var r : top) {
+                sb.append(' ')
+                        .append(r.name.replace(' ','_')).append(' ')
+                        .append(r.kills).append(' ')
+                        .append(r.deaths);
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            return "TOP 0";
+        }
     }
 
     private void broadcastSnapshot() {
