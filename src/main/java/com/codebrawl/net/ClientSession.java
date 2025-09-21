@@ -199,6 +199,10 @@ public class ClientSession implements Runnable {
                 world.spawnPlayer(this, displayName, characterClass);
                 joined = true;
                 sendLine("WELCOME " + id);
+                try {
+                    int k = auth.getKills(cid);
+                    sendLine("SCORES " + k);
+                } catch (Exception ignore) {}
             } catch (SQLException e) {
                 sendLine("AUTH_FAIL error");
             }
@@ -214,6 +218,7 @@ public class ClientSession implements Runnable {
             world.spawnPlayer(this, displayName, characterClass);
             joined = true;
             sendLine("WELCOME " + id);
+            sendLine("SCORES 0");
             return;
         }
 
@@ -228,7 +233,6 @@ public class ClientSession implements Runnable {
             return;
         }
 
-
         if (line.startsWith("REQ_TOP")) {
             int limit = 10;
             String[] p = line.split("\\s+");
@@ -238,7 +242,6 @@ public class ClientSession implements Runnable {
             world.sendTopTo(this, limit);
         }
     }
-
 
     public void send(String s) { sendLine(s); }
 }

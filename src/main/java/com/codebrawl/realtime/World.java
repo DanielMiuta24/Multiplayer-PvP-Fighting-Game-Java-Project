@@ -146,14 +146,12 @@ public class World {
                         if (aS.getCharacterId() != null) {
                             auth.addKill(aS.getCharacterId());
                             int newKills = auth.getKills(aS.getCharacterId());
-                            aS.send("SCORES " + newKills);   // killer gets their updated total
+                            aS.send("SCORES " + newKills);
                         }
                         if (bS.getCharacterId() != null) {
                             auth.addDeath(bS.getCharacterId());
                         }
                     } catch (Exception ignored) {}
-
-
                     broadcastTop(10);
                 }
             }
@@ -162,11 +160,9 @@ public class World {
         broadcastSnapshot();
     }
 
-
     public void sendTopTo(ClientSession s, int limit) {
         s.send(buildTopLine(limit));
     }
-
 
     public void broadcastTop(int limit) {
         String line = buildTopLine(limit);
