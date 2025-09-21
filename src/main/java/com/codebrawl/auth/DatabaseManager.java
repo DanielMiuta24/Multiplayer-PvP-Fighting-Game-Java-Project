@@ -6,32 +6,25 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseManager {
+
+    private static final String DB_FILE;
+
     static {
         try {
             Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("SQLite JDBC driver not found on classpath. Add org.xerial:sqlite-jdbc.", e);
+        } catch (ClassNotFoundException ignore) {
+            System.err.println("[DB] org.sqlite.JDBC not found yet. If you run with Maven exec or a shaded jar, it will be available at runtime.");
         }
+        String root = System.getProperty("user.dir");
+        File dataDir = new File(root, "data");
+        if (!dataDir.exists()) dataDir.mkdirs();
+        DB_FILE = new File(dataDir, "codebrawl.db").getAbsolutePath();
+        System.out.println("[DB] Using " + DB_FILE);
     }
 
-    private final String jdbcUrl;
-
-    public DatabaseManager(String jdbcUrl) {
-        this.jdbcUrl = jdbcUrl;
-        ensureDir(jdbcUrl);
-    }
-
-    private void ensureDir(String jdbcUrl) {
-        if (!jdbcUrl.startsWith("jdbc:sqlite:")) return;
-        String path = jdbcUrl.substring("jdbc:sqlite:".length());
-        File file = new File(path).getAbsoluteFile();
-        File parent = file.getParentFile();
-        if (parent != null && !parent.exists()) parent.mkdirs();
-    }
 
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(jdbcUrl);
+        String url = "jdbc:sqlite:" + DB_FILE;
+        return DriverManager.getConnection(url);
     }
-
-    public String getJdbcUrl() { return jdbcUrl; }
 }

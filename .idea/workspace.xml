@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f8b10ace-cedd-4661-b31f-e70ff7f5e735" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/data/schema.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/codebrawl/auth/AuthManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/codebrawl/auth/AuthManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/codebrawl/auth/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/codebrawl/auth/DatabaseManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/codebrawl/model/Fighter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/codebrawl/model/Fighter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/codebrawl/model/Samurai.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/codebrawl/model/Samurai.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/codebrawl/net/ClientSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/codebrawl/net/ClientSession.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/codebrawl/net/RtClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/codebrawl/net/RtClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/codebrawl/net/RtServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/codebrawl/net/RtServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/codebrawl/realtime/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/codebrawl/realtime/World.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/codebrawl/ui/ClientApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/codebrawl/ui/ClientApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/maps/level1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/maps/level1.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/codebrawl/QuickDemo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/codebrawl/QuickDemo.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;DanielMiuta24&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/DanielMiuta24/Multiplayer-PvP-Fighting-Game-Java-Project.git&quot;,
+    &quot;accountId&quot;: &quot;7d5c6639-7f2c-4415-9d50-76013f03d744&quot;
+  }
+}</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+    <option name="showPreview" value="true" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="32e1jWpn5dG8ZXmXdXptft7cDo9" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.ClientApp.executor": "Run",
+    "Application.GameServer.executor": "Run",
+    "Application.GameUI.executor": "Run",
+    "Maven.Unknown [clean].executor": "Run",
+    "Maven.multiplayer-pvp-fighting-game [clean].executor": "Run",
+    "Maven.multiplayer-pvp-fighting-game [compile].executor": "Run",
+    "Maven.multiplayer-pvp-fighting-game [javafx:run].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "MavenSettings"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/data" />
+      <recent name="$PROJECT_DIR$/src/main/resources/backgrounds" />
+      <recent name="$PROJECT_DIR$/src/main/resources/sprites/fighter" />
+      <recent name="$PROJECT_DIR$/src/main/resources/sprites/samurai" />
+      <recent name="$PROJECT_DIR$/src/main/resources/sprites/shinobi" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn clean" />
+      <command value="mvn compile" />
+      <command value="mvn javafx:run" />
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.ClientApp">
+    <configuration name="ClientApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.codebrawl.ui.ClientApp" />
+      <module name="Multiplayer-PvP-Fighting-Game-Java-Project" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.codebrawl.ui.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GameServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.codebrawl.net.GameServer" />
+      <module name="Multiplayer-PvP-Fighting-Game-Java-Project" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.codebrawl.net.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GameUI" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.codebrawl.ui.GameUI" />
+      <module name="Multiplayer-PvP-Fighting-Game-Java-Project" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.codebrawl.ui.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.ClientApp" />
+        <item itemvalue="Application.GameUI" />
+        <item itemvalue="Application.GameServer" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f8b10ace-cedd-4661-b31f-e70ff7f5e735" name="Changes" comment="" />
+      <created>1757766359993</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1757766359993</updated>
+    </task>
+    <servers />
+  </component>
+</project>

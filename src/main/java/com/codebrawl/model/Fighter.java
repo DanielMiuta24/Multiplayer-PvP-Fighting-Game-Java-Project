@@ -23,7 +23,6 @@ public abstract class Fighter {
 
     public String getClazz()            { return clazz; }
     public int getMaxHp()               { return maxHp; }
-    public int getMaxMp()               { return maxMp; }
     public int getMoveSpeedPxPerSec()   { return moveSpeedPxPerSec; }
     public int getGuardReduction()      { return guardReduction; }
     public Move getBasicMove()          { return basic; }
