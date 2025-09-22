@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8b10ace-cedd-4661-b31f-e70ff7f5e735" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/codebrawl/AuthManagerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/csv-editor.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/codebrawl.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/codebrawl.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/codebrawl/QuickDemo.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +67,7 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "MavenSettings"
+    "settings.editor.selected.configurable": "co.tula.mermaidchart.settings.MermaidSettingsConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
